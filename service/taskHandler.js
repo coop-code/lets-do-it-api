@@ -1,6 +1,6 @@
 var taskConnection = require("../data/tasksConnection.js");
 
-function Task(title, description, comments, deadline) {
+function Task(title, description, comments, deadline, priority) {
 	"use strict";
 	this.title = title;
     this.description = description || "";
@@ -8,6 +8,7 @@ function Task(title, description, comments, deadline) {
     this.done = false;
     this.comments = comments || "";
     this.deadline = deadline || (new Date(Date.now() + 2592000000)); // 1 mes
+	this.priority = priority || false;
 }
 
 /* Get all tasks */
@@ -26,7 +27,7 @@ function Get(id, response) {
 function Insert(taskPost, response) {
 	"use strict";
 	if(Validate(taskPost, response)){
-    	var task = new Task(taskPost.title, taskPost.description, taskPost.comments, taskPost.deadline);
+    	var task = new Task(taskPost.title, taskPost.description, taskPost.comments, taskPost.deadline, taskPost.priority);
     	taskConnection.Insert(task, response);
     }
 }
@@ -39,7 +40,9 @@ function Delete(id, response) {
 
 function Validate(taskPost, response) {
 	"use strict";
-	if (taskPost && taskPost.length > 0) {
+	console.log(taskPost);
+	//console.log(taskPost.length);
+	if (taskPost) {
         if (!taskPost.title) {
             response.status(400).send("Please enter the title of the task.");
             return false;

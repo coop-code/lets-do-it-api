@@ -2,22 +2,23 @@
 var mongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var objectID = require('mongodb').ObjectID;
+require('dotenv').config();
 //var fs = require('fs');
 var TASKS_COLLECTION = 'tasks';
 
-//Connection URL (local mongodb server)
-var url = 'mongodb://127.0.0.1:27017/lets-do-it';
+//Connection URL (there's a file named ".env" that contains the declaration of each variable used by the connectionString)
+var connectionString = 'mongodb://' + process.env.DB_USER + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST;  
 
-/*Get All tasks (title, description, registrationDate and done)*/
+//All tasks (title, description, registrationDate and done)*/
 function GetAll(response){
 	"use strict";
-	mongoClient.connect(url, function (err, db){
+	mongoClient.connect(connectionString, function (err, db){
 		if (err) {
 			console.log ('Connection Failed. Error: ', err);
 		} else {
 			var collection = db.collection(TASKS_COLLECTION);
 			/*Fields title, description, registrationDate and done. {} means no filters*/
-			collection.find({}, { title: 1, description: 1, registrationDate: 1, deadline:1, comments: 1 , done: 1, _id : 1 }).toArray
+			collection.find({}, { title: 1, description: 1, registrationDate: 1, deadline:1, comments: 1, priority : 1 , done: 1, _id : 1 }).toArray
                 (function(err, result){		
 					//Parse date to a legible format
 					for (var i = 0; i < result.length; i++) {
@@ -35,7 +36,7 @@ function GetAll(response){
 /* Get a task by Id */
 function Get(id, response) {
 	"use strict";
-	mongoClient.connect(url, function(err, db){
+	mongoClient.connect(connectionString, function(err, db){
 		if (err) {
 			console.log ('Connection Failed. Error: ', err);
 		} else {
@@ -68,7 +69,7 @@ function Get(id, response) {
 /* Insert a task and return status 201 (created) on success */
 function Insert(task, response){
 	"use strict";
-	mongoClient.connect(url, function(err, db){
+	mongoClient.connect(connectionString, function(err, db){
 		if (err) {
 			console.log ('Connection Failed. Error: ', err);
 		} else {
@@ -76,8 +77,7 @@ function Insert(task, response){
 				assert.equal(err, null);
 				result.ops[0].registrationDate = ParseDate(result.ops[0].registrationDate);
 				result.ops[0].deadline = ParseDate(result.ops[0].deadline);
-				response.send(result.ops[0]);
-				response.status(201).send("Task created");
+				response.status(201).send(result.ops[0]);
 			});
 			db.close();
 		}
@@ -88,7 +88,7 @@ function Insert(task, response){
 /*Delete a task by id */
 function Delete(id, response) {
 	"use strict";
-	mongoClient.connect(url, function(err, db){
+	mongoClient.connect(connectionString, function(err, db){
 		if (err) {
 			console.log ('Connection Failed. Error: ', err);
 		} else {
@@ -126,7 +126,7 @@ function ParseDate(timestamp) {
   		var min = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
 		var sec = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
 		
-	return day + "/" + month + "/" + year +  " " + hour + ":" + min + ":" + sec;
+	return month + "/" + day + "/" + year;
 
 	} else {
 		return "";
@@ -136,7 +136,7 @@ function ParseDate(timestamp) {
 /* Update an existing task */
 function Update(id, task, response){
 	"use strict";
-	mongoClient.connect(url, function(err, db){
+	mongoClient.connect(connectionString, function(err, db){
 		if (err) {
 			console.log ('Connection Failed. Error: ', err);
 		} else {
@@ -169,7 +169,7 @@ function Update(id, task, response){
 
 function Done(id, response){
 	"use strict";
-	mongoClient.connect(url, function(err, db){
+	mongoClient.connect(connectionString, function(err, db){
 		if (err) {
 			console.log ('Connection Failed. Error: ', err);
 		} else {
@@ -206,7 +206,7 @@ function Done(id, response){
 function DeleteAll(response){
 	"use strict";
 	console.log("Deleting all tasks...");
-	mongoClient.connect(url, function (err, db){
+	mongoClient.connect(connectionString, function (err, db){
 		if (err) {
 			console.log ('Connection Failed. Error: ', err);
 		} else {

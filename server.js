@@ -17,6 +17,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
 	"use strict";
@@ -28,7 +34,7 @@ app.use(function(req, res, next) {
  * Get port from environment and store in Express.
  */
 
-app.set('port', process.env.PORT || '3000');
+app.set('port', process.env.PORT || '4000');
 
 //Start the server
 var server = app.listen(app.get('port'), function () {
