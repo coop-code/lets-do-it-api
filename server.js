@@ -1,12 +1,15 @@
 var express = require('express');
 var path = require('path');
-//var http = require('http');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 
 var app = express();
+
+/* Allow access from anywhere, including from local app */
+var cors = require('cors');
+app.use(cors());
 
 
 app.use(logger('dev'));
@@ -17,12 +20,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
 	"use strict";
@@ -30,6 +27,7 @@ app.use(function(req, res, next) {
 	err.status = 404;
 	next(err);
 });
+
 /**
  * Get port from environment and store in Express.
  */
