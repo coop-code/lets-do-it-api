@@ -11,16 +11,16 @@ function Task(title, description, comments, deadline, priority) {
 	this.priority = priority || false;
 }
 
-/* Get all tasks */
-function GetAll(response) {
+/* Get tasks with filters */
+function GetByFilter(finished, response) {
 	"use strict";
-	taskConnection.GetAll(response);
+	taskConnection.GetByFilter(finished, response);
 }
 
 /* Get task by id */
-function Get(id, response) {
+function GetById(id, response) {
 	"use strict";
-	taskConnection.Get(id, response);
+	taskConnection.GetById(id, response);
 }
 
 /* Validate the task and add default informations before submit to insert */
@@ -40,8 +40,6 @@ function Delete(id, response) {
 
 function Validate(taskPost, response) {
 	"use strict";
-	console.log(taskPost);
-	//console.log(taskPost.length);
 	if (taskPost) {
         if (!taskPost.title) {
             response.status(400).send("Please enter the title of the task.");
@@ -82,8 +80,8 @@ function DeleteAll(response){
 }
 exports.DeleteAll = DeleteAll;
 /*===========================================================*/
-exports.Get = Get;
-exports.GetAll = GetAll;
+exports.GetByFilter = GetByFilter;
+exports.GetById = GetById;
 exports.Insert = Insert;
 exports.Delete = Delete;
 exports.Update = Update;

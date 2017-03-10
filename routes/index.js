@@ -18,7 +18,7 @@ router.route('/tasks')
 	/* Get all tasks */
 	.get(function(req, res) {
 		"use strict";
-		taskHandler.GetAll(res);
+		taskHandler.GetByFilter(req.query.finished, res);
 	})
 	/* Post a Task (with title and description). The task handler add default informations before inserting */
 	.post(function(req, res) {
@@ -31,7 +31,7 @@ router.route('/tasks/:id')
 	/* Get Task by id */
 	.get(function(req, res) {
 		"use strict";
-		taskHandler.Get(req.params.id, res);
+		taskHandler.GetById(req.params.id, res);
 	})
 	/* Delete a task by id */
 	.delete(function(req, res) {
