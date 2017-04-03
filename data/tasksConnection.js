@@ -87,7 +87,6 @@ function GetById(id, response) {
 					if (err) {
 						response.status(500).send(err.message);
 					}
-					console.log(result);
 					if (result) {
 						//A task was found.
 						//Parse date to a legible format
@@ -112,7 +111,7 @@ function GetById(id, response) {
 /* Insert a task and return status 201 (created) on success */
 function Insert(task, response) {
 	"use strict";
-	console.log('Inserting...')
+	
 	mongoClient.connect(connectionString, function (err, db) {
 		if (err) {
 			console.log('Connection Failed. Error: ', err);
@@ -120,8 +119,7 @@ function Insert(task, response) {
 			autoIncrement.getNextSequence(db, TASKS_COLLECTION, function (err, indexValue) {
 				if (!err) {
 					task.id = indexValue
-					console.log(task);
-
+					
 					db.collection(TASKS_COLLECTION).insert(task, function (err, result) {
 						assert.equal(err, null);
 						result.ops[0].registrationDate = ParseDate(result.ops[0].registrationDate);
