@@ -143,10 +143,11 @@ function Delete(id, response) {
 			console.log('Connection Failed. Error: ', err);
 		} else {
 			var collection = db.collection(TASKS_COLLECTION);
-			try {
-				var o_Id = new objectID(id);
+
+			var idNumber = parseInt(id);
+			if (idNumber) {
 				collection.deleteOne({
-					_id: o_Id
+					id: idNumber
 				}, function (err, result) {
 					if (err) {
 						response.status(500).send(err.message);
@@ -159,9 +160,10 @@ function Delete(id, response) {
 						response.status(404).send("Task not found");
 					}
 				});
-			} catch (err) {
-				response.status(400).send("Id is not valid.");
+			} else {
+				response.status(400).send("Id must be a number");
 			}
+
 			db.close();
 		}
 	});
@@ -174,10 +176,10 @@ function Update(id, task, response) {
 		if (err) {
 			console.log('Connection Failed. Error: ', err);
 		} else {
-			var o_Id = new objectID(id);
-			try {
+			var idNumber = parseInt(id);
+			if (idNumber) {
 				db.collection(TASKS_COLLECTION).updateOne({
-						_id: o_Id
+						id: idNumber
 					}, {
 						$set: task
 					},
@@ -195,8 +197,8 @@ function Update(id, task, response) {
 						}
 					}
 				);
-			} catch (err) {
-				response.status(400).send("Id is not valid");
+			} else {
+				response.status(404).send("Id must be a number");
 			}
 			db.close();
 		}
@@ -209,10 +211,10 @@ function Done(id, response) {
 		if (err) {
 			console.log('Connection Failed. Error: ', err);
 		} else {
-			var o_Id = new objectID(id);
-			try {
+			var idNumber = parseInt(id);
+				if (idNumber) {
 				db.collection(TASKS_COLLECTION).updateOne({
-						_id: o_Id
+						id: idNumber
 					}, {
 						$set: {
 							done: true
@@ -233,8 +235,8 @@ function Done(id, response) {
 						}
 					}
 				);
-			} catch (err) {
-				response.status(400).send("Id is not valid");
+			} else {
+				response.status(400).send("Id must be a number");
 			}
 			db.close();
 		}
