@@ -1,9 +1,10 @@
 //Import driver
 var mongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
-var objectID = require('mongodb').ObjectID;
+
 require('dotenv').config();
 var TASKS_COLLECTION = 'tasks';
+var autoIncrement = require("mongodb-autoincrement");
 
 //Connection URL (there's a file named ".env" that contains the declaration of each variable used by the connectionString)
 var connectionString = 'mongodb://' + process.env.DB_USER + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST;
@@ -19,6 +20,7 @@ function GetByFilter(finished, response) {
 
 			if (finished === undefined) {
 				collection.find({}, {
+					id: 1,
 					title: 1,
 					description: 1,
 					registrationDate: 1,
@@ -39,10 +41,11 @@ function GetByFilter(finished, response) {
 			} else {
 
 				var isFinished = (finished.toLowerCase() == 'true');
-				
+
 				collection.find({
 					done: isFinished
 				}, {
+					id: 1,
 					title: 1,
 					description: 1,
 					registrationDate: 1,
@@ -75,15 +78,16 @@ function GetById(id, response) {
 		if (err) {
 			console.log('Connection Failed. Error: ', err);
 		} else {
-			var collection = db.collection(TASKS_COLLECTION);
-			try {
-				var o_Id = new objectID(id);
+			var idNumber = parseInt(id);
+			if (idNumber) {
+				var collection = db.collection(TASKS_COLLECTION);
 				collection.findOne({
-					_id: o_Id
+					'id': idNumber
 				}, function (err, result) {
 					if (err) {
 						response.status(500).send(err.message);
 					}
+					console.log(result);
 					if (result) {
 						//A task was found.
 						//Parse date to a legible format
@@ -95,9 +99,11 @@ function GetById(id, response) {
 						response.status(404).send("Task not found");
 					}
 				});
-			} catch (err) {
-				response.status(400).send("Id is not valid.");
+			} else {
+				//Parse Error
+				response.status(400).send('Id must be a number.');
 			}
+
 			db.close();
 		}
 	});
@@ -106,21 +112,28 @@ function GetById(id, response) {
 /* Insert a task and return status 201 (created) on success */
 function Insert(task, response) {
 	"use strict";
+	console.log('Inserting...')
 	mongoClient.connect(connectionString, function (err, db) {
 		if (err) {
 			console.log('Connection Failed. Error: ', err);
 		} else {
-			db.collection(TASKS_COLLECTION).insert(task, function (err, result) {
-				assert.equal(err, null);
-				result.ops[0].registrationDate = ParseDate(result.ops[0].registrationDate);
-				result.ops[0].deadline = ParseDate(result.ops[0].deadline);
-				response.status(201).send(result.ops[0]);
+			autoIncrement.getNextSequence(db, TASKS_COLLECTION, function (err, indexValue) {
+				if (!err) {
+					task.id = indexValue
+					console.log(task);
+
+					db.collection(TASKS_COLLECTION).insert(task, function (err, result) {
+						assert.equal(err, null);
+						result.ops[0].registrationDate = ParseDate(result.ops[0].registrationDate);
+						result.ops[0].deadline = ParseDate(result.ops[0].deadline);
+						response.status(201).send(result.ops[0]);
+					});
+				}
 			});
-			db.close();
+
 		}
 	});
 }
-
 
 /*Delete a task by id */
 function Delete(id, response) {
@@ -152,24 +165,6 @@ function Delete(id, response) {
 			db.close();
 		}
 	});
-}
-
-function ParseDate(timestamp) {
-	"use strict";
-	if (timestamp) {
-		var date = new Date(timestamp);
-		var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
-		var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
-		var year = date.getFullYear();
-		var hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
-		var min = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
-		var sec = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-
-		return month + "/" + day + "/" + year;
-
-	} else {
-		return "";
-	}
 }
 
 /* Update an existing task */
@@ -272,6 +267,27 @@ function DeleteAll(response) {
 		}
 	});
 }
+
+/* Private Functions */
+function ParseDate(timestamp) {
+	"use strict";
+	if (timestamp) {
+		var date = new Date(timestamp);
+		var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+		var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+		var year = date.getFullYear();
+		//var hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+		//var min = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+		//var sec = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+
+		return month + "/" + day + "/" + year;
+
+	} else {
+		return "";
+	}
+}
+
+
 exports.DeleteAll = DeleteAll;
 /*===========================================================*/
 exports.GetByFilter = GetByFilter;

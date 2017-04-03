@@ -2,12 +2,13 @@ var taskConnection = require("../data/tasksConnection.js");
 
 function Task(title, description, comments, deadline, priority) {
 	"use strict";
+	this.id = 0,
 	this.title = title;
     this.description = description || "";
     this.registrationDate = new Date(Date.now());
     this.done = false;
     this.comments = comments || "";
-    this.deadline = deadline || (new Date(Date.now() + 2592000000)); // 1 mes
+    this.deadline = deadline || (new Date(Date.now() + 2592000000)); // 1 month ahead of the registration date
 	this.priority = priority || false;
 }
 
@@ -28,7 +29,7 @@ function Insert(taskPost, response) {
 	"use strict";
 	if(Validate(taskPost, response)){
     	var task = new Task(taskPost.title, taskPost.description, taskPost.comments, taskPost.deadline, taskPost.priority);
-    	taskConnection.Insert(task, response);
+		taskConnection.Insert(task, response);
     }
 }
 
