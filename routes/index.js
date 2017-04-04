@@ -46,11 +46,11 @@ router.route('/tasks/:id')
 		taskHandler.Update(req.params.id, task, res);
 	});
 
-router.route('/tasks/:id/done')
+router.route('/tasks/:id/finish')
 	/* Ends a task */
 	.put(function(req, res) {
 		"use strict";
-		taskHandler.Done(req.params.id, res);
+		taskHandler.Finish(req.params.id, res);
 	});
 
 	

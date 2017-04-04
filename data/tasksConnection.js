@@ -203,7 +203,7 @@ function Update(id, task, response) {
 	});
 }
 
-function Done(id, response) {
+function Finish(id, response) {
 	"use strict";
 	mongoClient.connect(connectionString, function (err, db) {
 		if (err) {
@@ -295,4 +295,4 @@ exports.GetById = GetById;
 exports.Insert = Insert;
 exports.Delete = Delete;
 exports.Update = Update;
-exports.Done = Done;
+exports.Finish = Finish;

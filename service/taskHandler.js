@@ -67,10 +67,10 @@ function Update(id, taskUpdate, response) {
 	}
 }
 
-/*Update a task by id */
-function Done(id, response) {
+/*Mark task as done (finished) */
+function Finish(id, response) {
 	"use strict";
-	taskConnection.Done(id, response);
+	taskConnection.Finish(id, response);
 }
 
 /*================WARNING: REMOVE FROM PRODUCTION================*/
@@ -86,5 +86,5 @@ exports.GetById = GetById;
 exports.Insert = Insert;
 exports.Delete = Delete;
 exports.Update = Update;
-exports.Done = Done;
+exports.Finish = Finish;
 exports.Task = Task;
