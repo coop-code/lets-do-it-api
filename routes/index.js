@@ -42,15 +42,7 @@ router.route('/tasks/:id')
 	.put(function(req, res) {
 		"use strict";
 		var task = req.body;
-		delete task.done;
 		taskHandler.Update(req.params.id, task, res);
-	});
-
-router.route('/tasks/:id/finish')
-	/* Ends a task */
-	.put(function(req, res) {
-		"use strict";
-		taskHandler.Finish(req.params.id, res);
 	});
 
 	
