@@ -32,7 +32,7 @@ app.use(function(req, res, next) {
  * Get port from environment and store in Express.
  */
 
-app.set('port', process.env.PORT || '4000');
+app.set('port', process.env.PORT || '4001');
 
 //Start the server
 var server = app.listen(app.get('port'), function () {
