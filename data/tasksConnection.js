@@ -2,12 +2,23 @@
 var mongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 
-require('dotenv').config();
 var TASKS_COLLECTION = 'tasks';
 var autoIncrement = require("mongodb-autoincrement");
 
-//Connection URL (there's a file named ".env" that contains the declaration of each variable used by the connectionString)
-var connectionString = 'mongodb://' + process.env.DB_USER + ':' + process.env.DB_PASSWORD + '@' + process.env.DB_HOST;
+
+
+
+/*****************
+Connection URL is composed by user, password and host
+Right now, the database is hosted in mongodb atlas. Feel free to change if you already have a database.
+The current environment is just for studying purposes, so there's no need provide any additional security yet.
+The main goal here is get the API ready the fastest way possible so other APPs can consume it.
+*****************/
+var dbUser = 'lets-do-it-api';
+var dbPassword = 'lets-do-it-api-password';
+var dbHost = 'clustermongodb-shard-00-00-fpkbe.mongodb.net:27017,clustermongodb-shard-00-01-fpkbe.mongodb.net:27017,clustermongodb-shard-00-02-fpkbe.mongodb.net:27017/letsdoit?ssl=true&replicaSet=ClusterMongoDB-shard-0&authSource=admin' 
+
+var connectionString = 'mongodb://' + dbUser + ':' + dbPassword + '@' + dbHost;
 
 //All tasks (title, description, registrationDate and done)*/
 function GetByFilter(finished, response) {
@@ -203,44 +214,6 @@ function Update(id, task, response) {
 	});
 }
 
-function Finish(id, response) {
-	"use strict";
-	mongoClient.connect(connectionString, function (err, db) {
-		if (err) {
-			console.log('Connection Failed. Error: ', err);
-		} else {
-			var idNumber = parseInt(id);
-				if (idNumber) {
-				db.collection(TASKS_COLLECTION).updateOne({
-						id: idNumber
-					}, {
-						$set: {
-							done: true
-						}
-					},
-					function (err, result) {
-						if (err) {
-							console.warn(err.message);
-							response.status(500).send(err.message);
-						} else {
-							if (result && result.result.n > 0) {
-								//A task was finished
-								response.status(200).send("Task finished");
-							} else {
-								//No task were deleted, which means that there's no task with this id.
-								response.status(404).send("Task not found");
-							}
-						}
-					}
-				);
-			} else {
-				response.status(400).send("Id must be a number");
-			}
-			db.close();
-		}
-	});
-}
-
 /*================WARNING: REMOVE FROM PRODUCTION================*/
 /* Delete all tasks */
 function DeleteAll(response) {
@@ -295,4 +268,3 @@ exports.GetById = GetById;
 exports.Insert = Insert;
 exports.Delete = Delete;
 exports.Update = Update;
-exports.Finish = Finish;

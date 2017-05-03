@@ -67,12 +67,6 @@ function Update(id, taskUpdate, response) {
 	}
 }
 
-/*Mark task as done (finished) */
-function Finish(id, response) {
-	"use strict";
-	taskConnection.Finish(id, response);
-}
-
 /*================WARNING: REMOVE FROM PRODUCTION================*/
 /* Delete all tasks */
 function DeleteAll(response){
@@ -86,5 +80,4 @@ exports.GetById = GetById;
 exports.Insert = Insert;
 exports.Delete = Delete;
 exports.Update = Update;
-exports.Finish = Finish;
 exports.Task = Task;
