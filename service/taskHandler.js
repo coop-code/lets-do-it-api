@@ -8,7 +8,7 @@ function Task(title, description, comments, deadline, priority) {
     this.registrationDate = new Date(Date.now());
     this.done = false;
     this.comments = comments || "";
-    this.deadline = deadline || (new Date(Date.now() + 2592000000)); // 1 month ahead of the registration date
+    this.deadline = deadline || null
 	this.priority = priority || false;
 }
 
