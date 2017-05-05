@@ -23,7 +23,7 @@ The full list of operations along with the data transfer objects models will be 
 For now, check the file `lets-do-it-api/routes/index.js`. This file contains all available operations and routes for it.
 
 The main purpose of the API is to study (and be good at) NodeJS and MongoDB. So expect a lot of changes along the way.
-The other purpose of the API is to be a Service Layer for any other APP that wants to consume services that manipulate tasks.
+The other purpose is to be a Service Layer for any other APP (or another API) that wants to consume services that manipulate tasks.
 
 ## Setup
 
