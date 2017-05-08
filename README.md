@@ -28,7 +28,7 @@ The other purpose is to be a Service Layer for any other APP (or another API) th
 ## Setup
 
 1. Clone this repository 
-2. Open a command prompt, navigate to the folder that cointains the cloned repository and run `npm install` to install all the dependencies.
+2. Open a command prompt, navigate to the folder that contains the cloned repository and run `npm install` to install all the dependencies.
 3. Run `npm start` to the start the application.
 
 The API runs on port 4001 as default. If you want the test it (and make all possible requests) easily, we recommend the http client [Postman](https://www.getpostman.com/)
