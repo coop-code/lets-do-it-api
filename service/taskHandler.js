@@ -8,7 +8,7 @@ function Task(title, description, comments, deadline, priority) {
     this.registrationDate = new Date(Date.now());
     this.done = false;
     this.comments = comments || "";
-    this.deadline = deadline || null
+    this.deadline = deadline || undefined
 	this.priority = priority || false;
 }
 
