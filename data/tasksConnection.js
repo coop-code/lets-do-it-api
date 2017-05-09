@@ -256,7 +256,7 @@ function ParseDate(timestamp) {
 		return month + "/" + day + "/" + year;
 
 	} else {
-		return "";
+		return undefined;
 	}
 }
 
