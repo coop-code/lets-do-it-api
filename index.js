@@ -3,7 +3,8 @@ var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
+var tasksController = require('./tasks/tasks.controller');
+var pingController = require('./ping/ping.controller');
 
 var app = express();
 
@@ -11,14 +12,16 @@ var app = express();
 var cors = require('cors');
 app.use(cors());
 
-
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+
+//Routes and Controllers configurations
+app.use('/tasks', tasksController);
+app.use('/ping', pingController);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -28,10 +31,7 @@ app.use(function(req, res, next) {
 	next(err);
 });
 
-/**
- * Get port from environment and store in Express.
- */
-
+//Default port is 4001 if not set by environment variable
 app.set('port', process.env.PORT || '4001');
 
 //Start the server
