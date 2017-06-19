@@ -37,7 +37,6 @@ router.route('/:id')
 		var task = req.body;
 		taskService.Update(req.params.id, task, res);
 	});
-
 	
 /*================WARNING: REMOVE FROM PRODUCTION================/*
 /* Delete all tasks */
