@@ -1,6 +1,7 @@
 var assert = require('assert');
 const mongoose = require('mongoose');
 const Task = require('./models/task.schema');
+mongoose.Promise = Promise;
 
 /*****************
 Connection URL is composed by user, password and host
@@ -12,20 +13,15 @@ const dbPassword = 'lets-do-it-password';
 const dbHost = 'clustermongodb-shard-00-00-fpkbe.mongodb.net:27017,clustermongodb-shard-00-01-fpkbe.mongodb.net:27017,clustermongodb-shard-00-02-fpkbe.mongodb.net:27017/letsdoit?ssl=true&replicaSet=ClusterMongoDB-shard-0&authSource=admin'
 const connectionString = 'mongodb://' + dbUser + ':' + dbPassword + '@' + dbHost;
 
-//All tasks (title, description, registrationDate and done)*/
-function GetByFilter(finished = 'false', response) {
-	mongoose.connect(connectionString, function (err) {
-		if (err) {
-			console.log('Connection Failed. Error: ', err);
-		} else {
-			let isFinished = finished.toLowerCase() === 'true';
-			Task.find({
-				done: isFinished
-			}, function (err, tasks) {
-				response.status(200).send(tasks);
-			});
-		}
+async function GetByFilter(finished = 'false') {
+
+	connection = await createConnection(connectionString);
+	let isFinished = finished.toLowerCase() === 'true';
+	const tasks = await Task.find({
+		done: isFinished
 	});
+	await connection.close();
+	return tasks;
 }
 
 /* Get a task by Id */
@@ -144,6 +140,20 @@ function ParseDate(timestamp) {
 	}
 }
 
+function handleConnectionError() {
+	throw new Error("Connection Problem");
+}
+
+async function createConnection(connectionString) {
+	try {
+		await mongoose.connect(connectionString);
+		let connection = mongoose.connection;
+		connection.on("error", handleConnectionError);
+		return connection;
+	} catch (err) {
+		handleConnectionError();
+	}
+}
 
 exports.DeleteAll = DeleteAll;
 /*===========================================================*/
