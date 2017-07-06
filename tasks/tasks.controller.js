@@ -19,6 +19,21 @@ const getTasksAsync = async function getTasksAsync(req, res) {
 	}
 }
 
+const getTaskAsync = async function getTask(req, res) {
+	let task = {};
+	try {
+		task = await taskService.GetById(req.params.id);
+		console.log(task);
+		if (task) {
+			res.status(200).send(task);
+		} else {
+			res.status(404).send();
+		}
+	} catch (error) {
+		res.status(500).send(error.message);
+	}
+}
+
 router.route('/')
 	/* Get all tasks */
 	.get(getTasksAsync)
@@ -30,10 +45,7 @@ router.route('/')
 
 router.route('/:id')
 	/* Get Task by id */
-	.get(function (req, res) {
-		"use strict";
-		taskService.GetByFilter(req.params.id, res);
-	})
+	.get(getTaskAsync)
 	/* Delete a task by id */
 	.delete(function (req, res) {
 		"use strict";

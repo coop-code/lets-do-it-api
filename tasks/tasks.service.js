@@ -14,16 +14,14 @@ function Task(title, description, comments, deadline, priority) {
 
 /* Get tasks with filters */
 async function GetByFilter(finished) {
-	"use strict";
 	let tasks = [];
 	tasks = await taskConnection.GetByFilter(finished);
 	return tasks;
 }
 
 /* Get task by id */
-function GetById(id, response) {
-	"use strict";
-	taskConnection.GetById(id, response);
+async function GetById(id) {
+	return await taskConnection.GetById(id);
 }
 
 /* Validate the task and add default informations before submit to insert */

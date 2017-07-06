@@ -15,7 +15,7 @@ const connectionString = 'mongodb://' + dbUser + ':' + dbPassword + '@' + dbHost
 
 async function GetByFilter(finished = 'false') {
 
-	connection = await createConnection(connectionString);
+	connection = await getConnection(connectionString);
 	let isFinished = finished.toLowerCase() === 'true';
 	const tasks = await Task.find({
 		done: isFinished
@@ -25,20 +25,14 @@ async function GetByFilter(finished = 'false') {
 }
 
 /* Get a task by Id */
-function GetById(id, response) {
-	mongoose.connect(connectionString, function (err) {
-		if (err) {
-			console.log('Connection Failed. Error: ', err);
-		} else {
-			Task.findById(id, function (err, task) {
-				if (task) {
-					response.status(200).send(task);
-				} else {
-					response.status(404).send();
-				}
-			});
-		}
-	});
+async function GetById(id) {
+	connection = await getConnection(connectionString);
+	try {
+		const task = await Task.findById(id).exec();
+		return task
+	} catch (err) {
+		return null;
+	}
 }
 
 /* Insert a task and return status 201 (created) on success */
@@ -144,7 +138,7 @@ function handleConnectionError() {
 	throw new Error("Connection Problem");
 }
 
-async function createConnection(connectionString) {
+async function getConnection(connectionString) {
 	try {
 		await mongoose.connect(connectionString);
 		let connection = mongoose.connection;
