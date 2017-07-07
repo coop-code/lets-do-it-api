@@ -17,7 +17,7 @@ const getTasksAsync = async function getTasksAsync(req, res) {
 		tasks = await taskService.GetByFilter(req.query.finished);
 		res.status(200).send(tasks);
 	} catch (error) {
-		res.status(500).send(error.message);
+		res.status(500).send({"status" : 500, "error" : error.message});
 	}
 }
 
@@ -31,7 +31,7 @@ const getTaskAsync = async function getTask(req, res) {
 			res.status(404).send();
 		}
 	} catch (error) {
-		res.status(500).send(error.message);
+		res.status(500).send({"status" : 500, "error" : error.message});
 	}
 }
 
@@ -42,7 +42,7 @@ const postTaskAsync = async function postTaskAsync(req, res) {
 		task = await taskService.Post(createTaskDto);
 		res.status(201).send(task);
 	} catch (error) {
-		res.status(500).send(error.message);
+		res.status(500).send({"status" : 500, "error" : error.message});
 	}
 }
 
@@ -56,7 +56,7 @@ const deleteTaskAsync = async function deleteTaskAsync(req, res) {
 			res.status(204).send();
 		}
 	} catch (error) {
-		res.status(500).send(error.message);
+		res.status(500).send({"status" : 500, "error" : error.message});
 	}
 }
 
