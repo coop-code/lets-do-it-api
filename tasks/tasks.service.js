@@ -21,12 +21,12 @@ async function Put(id, task) {
 
 /*================WARNING: REMOVE FROM PRODUCTION================*/
 /* Delete all tasks */
-function DeleteAll(response) {
-	"use strict";
-	taskConnection.DeleteAll(response);
+async function DeleteAll() {
+	return await taskConnection.DeleteAll();
 }
 exports.DeleteAll = DeleteAll;
 /*===========================================================*/
+
 exports.GetByFilter = GetByFilter;
 exports.GetById = GetById;
 exports.Post = Post;

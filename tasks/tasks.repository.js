@@ -72,22 +72,9 @@ async function Put(id, task) {
 
 /*================WARNING: REMOVE FROM PRODUCTION================*/
 /* Delete all tasks */
-function DeleteAll(response) {
-	"use strict";
-	console.log("Deleting all tasks...");
-	mongoose.connect(connectionString, function (err) {
-		if (err) {
-			console.log('Connection Failed. Error: ', err);
-		} else {
-			Task.remove({}, function (err) {
-				if (err) {
-					response.status(500).send()
-				} else {
-					response.status(204).send();
-				}
-			});
-		}
-	});
+async function DeleteAll(response) {
+	await getConnection(connectionString);
+	return await Task.remove({}).exec();
 }
 
 /* Private Functions */

@@ -94,23 +94,29 @@ const deleteTaskAsync = async function deleteTaskAsync(req, res) {
 	}
 }
 
+//Function that removes all tasks (NOT ADVISED on production environments)
+const deleteAllTasksAsync = async function deleteAllTasksAsync(req, res) {
+	try {
+		await taskService.DeleteAll();
+		res.status(204).send();
+	} catch (error) {
+		res.status(500).send({
+			"status": 500,
+			"error": error.message
+		});
+	}
+}
+
 /* Routes definitions */
 
 router.route('/')
 	.get(getTasksAsync)
-	.post(postTaskAsync);
+	.post(postTaskAsync)
+	.delete(deleteAllTasksAsync);
 
 router.route('/:id')
 	.get(getTaskAsync)
 	.put(putTaskAsync)
-	.delete(deleteTaskAsync);
-	
-//================WARNING: REMOVE FROM PRODUCTION================//
-// Delete all tasks
-router.delete('/', function (req, res) {
-	"use strict";
-	taskService.DeleteAll(res);
-});
-//===========================================================//
+	.delete(deleteTaskAsync);	
 
 module.exports = router;
