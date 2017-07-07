@@ -59,23 +59,15 @@ async function Delete(id) {
 	}
 
 }
-
-/* Update an existing task */
-function Update(id, task, response) {
-	"use strict";
-	mongoose.connect(connectionString, function (err) {
-		if (err) {
-			console.log('Connection Failed. Error: ', err);
-		} else {
-			Task.findByIdAndUpdate(id, task, function (err, updatedTask) {
-				if (err) {
-					response.status(404).send()
-				} else {
-					response.status(204).send();
-				}
-			});
-		}
-	});
+async function Put(id, task) {
+	await getConnection(connectionString);
+	try {
+		return await Task.findByIdAndUpdate(id, task).exec();
+	} catch (error) {
+		return {
+			"code": 404
+		};
+	}
 }
 
 /*================WARNING: REMOVE FROM PRODUCTION================*/
@@ -138,4 +130,4 @@ exports.GetByFilter = GetByFilter;
 exports.GetById = GetById;
 exports.Post = Post;
 exports.Delete = Delete;
-exports.Update = Update;
+exports.Put = Put;

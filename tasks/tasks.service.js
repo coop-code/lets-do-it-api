@@ -15,12 +15,8 @@ async function Delete(id) {
 	return await taskConnection.Delete(id);
 }
 
-/*Update a task by id */
-function Update(id, taskUpdate, response) {
-	"use strict";
-	if (Validate(taskUpdate, response)) {
-		taskConnection.Update(id, taskUpdate, response);
-	}
+async function Put(id, task) {
+	return await taskConnection.Put(id, task);
 }
 
 /*================WARNING: REMOVE FROM PRODUCTION================*/
@@ -35,4 +31,4 @@ exports.GetByFilter = GetByFilter;
 exports.GetById = GetById;
 exports.Post = Post;
 exports.Delete = Delete;
-exports.Update = Update;
+exports.Put = Put;

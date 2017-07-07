@@ -1,4 +1,7 @@
-let {CreateTaskDto} = require('./models/task.dto');
+let {
+	CreateTaskDto,
+	PutTaskDto
+} = require('./models/task.dto');
 
 var express = require('express');
 var router = express.Router();
@@ -11,13 +14,17 @@ app.use(bodyParser.urlencoded({
 	extended: false
 }));
 
+/* Functions associated to routes */
 const getTasksAsync = async function getTasksAsync(req, res) {
 	let tasks = [];
 	try {
 		tasks = await taskService.GetByFilter(req.query.finished);
 		res.status(200).send(tasks);
 	} catch (error) {
-		res.status(500).send({"status" : 500, "error" : error.message});
+		res.status(500).send({
+			"status": 500,
+			"error": error.message
+		});
 	}
 }
 
@@ -31,7 +38,10 @@ const getTaskAsync = async function getTask(req, res) {
 			res.status(404).send();
 		}
 	} catch (error) {
-		res.status(500).send({"status" : 500, "error" : error.message});
+		res.status(500).send({
+			"status": 500,
+			"error": error.message
+		});
 	}
 }
 
@@ -42,7 +52,28 @@ const postTaskAsync = async function postTaskAsync(req, res) {
 		task = await taskService.Post(createTaskDto);
 		res.status(201).send(task);
 	} catch (error) {
-		res.status(500).send({"status" : 500, "error" : error.message});
+		res.status(500).send({
+			"status": 500,
+			"error": error.message
+		});
+	}
+}
+
+const putTaskAsync = async function putTaskAsync(req, res) {
+	try {
+		let status = {};
+		let putTaskDto = new PutTaskDto(req.body);
+		status = await taskService.Put(req.params.id, putTaskDto);
+		if (status.code == 404) {
+			res.status(404).send();
+		} else {
+			res.status(204).send();
+		}
+	} catch (error) {
+		res.status(500).send({
+			"status": 500,
+			"error": error.message
+		});
 	}
 }
 
@@ -56,9 +87,14 @@ const deleteTaskAsync = async function deleteTaskAsync(req, res) {
 			res.status(204).send();
 		}
 	} catch (error) {
-		res.status(500).send({"status" : 500, "error" : error.message});
+		res.status(500).send({
+			"status": 500,
+			"error": error.message
+		});
 	}
 }
+
+/* Routes definitions */
 
 router.route('/')
 	.get(getTasksAsync)
@@ -66,14 +102,9 @@ router.route('/')
 
 router.route('/:id')
 	.get(getTaskAsync)
-	.delete(deleteTaskAsync)
-	/* Update Task by id */
-	.put(function (req, res) {
-		"use strict";
-		var task = req.body;
-		taskService.Update(req.params.id, task, res);
-	});
-
+	.put(putTaskAsync)
+	.delete(deleteTaskAsync);
+	
 //================WARNING: REMOVE FROM PRODUCTION================//
 // Delete all tasks
 router.delete('/', function (req, res) {
