@@ -1,13 +1,9 @@
 var taskConnection = require("./tasks.repository.js");
 
-/* Get tasks with filters */
 async function GetByFilter(finished) {
-	let tasks = [];
-	tasks = await taskConnection.GetByFilter(finished);
-	return tasks;
+	return await taskConnection.GetByFilter(finished);
 }
 
-/* Get task by id */
 async function GetById(id) {
 	return await taskConnection.GetById(id);
 }
@@ -15,16 +11,8 @@ async function Post(task) {
 	return await taskConnection.Post(task);
 }
 
-/*Delete a task by id */
-function Delete(id, response) {
-	"use strict";
-	taskConnection.Delete(id, response);
-}
-
-/*Delete a task by id */
-function Delete(id, response) {
-	"use strict";
-	taskConnection.Delete(id, response);
+async function Delete(id) {
+	return await taskConnection.Delete(id);
 }
 
 /*Update a task by id */

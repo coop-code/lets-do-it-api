@@ -47,23 +47,17 @@ async function Post(task) {
 }
 
 /*Delete a task by id */
-function Delete(id, response) {
-	"use strict";
-	mongoose.connect(connectionString, function (err) {
-		if (err) {
-			console.log('Connection Failed. Error: ', err);
-		} else {
-			Task.findById(id, function (err, task) {
-				if (task) {
-					task.remove(function (err) {
-						response.status(204).send();
-					});
-				} else {
-					response.status(404).send();
-				}
-			});
-		}
-	});
+async function Delete(id) {
+	await getConnection(connectionString);
+	try {
+		let task = await Task.findById(id).exec();
+		return await task.remove();
+	} catch (error) {
+		return {
+			"code": 404
+		};
+	}
+
 }
 
 /* Update an existing task */

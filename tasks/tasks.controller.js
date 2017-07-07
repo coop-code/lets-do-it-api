@@ -1,6 +1,4 @@
-let {
-	CreateTaskDto
-} = require('./models/task.dto');
+let {CreateTaskDto} = require('./models/task.dto');
 
 var express = require('express');
 var router = express.Router();
@@ -48,18 +46,27 @@ const postTaskAsync = async function postTaskAsync(req, res) {
 	}
 }
 
+const deleteTaskAsync = async function deleteTaskAsync(req, res) {
+	try {
+		let status = {};
+		status = await taskService.Delete(req.params.id);
+		if (status.code == 404) {
+			res.status(404).send();
+		} else {
+			res.status(204).send();
+		}
+	} catch (error) {
+		res.status(500).send(error.message);
+	}
+}
+
 router.route('/')
 	.get(getTasksAsync)
 	.post(postTaskAsync);
 
 router.route('/:id')
-	/* Get Task by id */
 	.get(getTaskAsync)
-	/* Delete a task by id */
-	.delete(function (req, res) {
-		"use strict";
-		taskService.Delete(req.params.id, res);
-	})
+	.delete(deleteTaskAsync)
 	/* Update Task by id */
 	.put(function (req, res) {
 		"use strict";
@@ -67,16 +74,12 @@ router.route('/:id')
 		taskService.Update(req.params.id, task, res);
 	});
 
-/*================WARNING: REMOVE FROM PRODUCTION================/*
-/* Delete all tasks */
+//================WARNING: REMOVE FROM PRODUCTION================//
+// Delete all tasks
 router.delete('/', function (req, res) {
 	"use strict";
 	taskService.DeleteAll(res);
 });
+//===========================================================//
 
-
-
-/*===========================================================/*
- * 
- */
 module.exports = router;
