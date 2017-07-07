@@ -15,18 +15,17 @@ const connectionString = 'mongodb://' + dbUser + ':' + dbPassword + '@' + dbHost
 
 async function GetByFilter(finished = 'false') {
 
-	connection = await getConnection(connectionString);
+	await getConnection(connectionString);
 	let isFinished = finished.toLowerCase() === 'true';
 	const tasks = await Task.find({
 		done: isFinished
 	});
-	await connection.close();
 	return tasks;
 }
 
 /* Get a task by Id */
 async function GetById(id) {
-	connection = await getConnection(connectionString);
+	await getConnection(connectionString);
 	try {
 		const task = await Task.findById(id).exec();
 		return task
@@ -36,25 +35,15 @@ async function GetById(id) {
 }
 
 /* Insert a task and return status 201 (created) on success */
-function Insert(task, response) {
-	mongoose.connect(connectionString, function (err) {
-		if (err) {
-			console.log('Connection Failed. Error: ', err);
-		} else {
-			let newTask = Task({
-				title: task.title,
-				description: task.description,
-				comments: task.comments
-			});
-			newTask.save(function (err) {
-				if (err) {
-					console.log('Error creating task');
-				} else {
-					response.status(201).send(newTask);
-				}
-			});
-		}
+async function Post(task) {
+	await getConnection(connectionString);
+	let newTask = Task({
+		title: task.title,
+		description: task.description,
+		comments: task.comments,
+		priority: task.priority
 	});
+	return await newTask.save();
 }
 
 /*Delete a task by id */
@@ -153,6 +142,6 @@ exports.DeleteAll = DeleteAll;
 /*===========================================================*/
 exports.GetByFilter = GetByFilter;
 exports.GetById = GetById;
-exports.Insert = Insert;
+exports.Post = Post;
 exports.Delete = Delete;
 exports.Update = Update;

@@ -1,3 +1,7 @@
+let {
+	CreateTaskDto
+} = require('./models/task.dto');
+
 var express = require('express');
 var router = express.Router();
 var bodyParser = require('body-parser');
@@ -23,7 +27,6 @@ const getTaskAsync = async function getTask(req, res) {
 	let task = {};
 	try {
 		task = await taskService.GetById(req.params.id);
-		console.log(task);
 		if (task) {
 			res.status(200).send(task);
 		} else {
@@ -34,14 +37,20 @@ const getTaskAsync = async function getTask(req, res) {
 	}
 }
 
+const postTaskAsync = async function postTaskAsync(req, res) {
+	let task = {};
+	let createTaskDto = new CreateTaskDto(req.body);
+	try {
+		task = await taskService.Post(createTaskDto);
+		res.status(201).send(task);
+	} catch (error) {
+		res.status(500).send(error.message);
+	}
+}
+
 router.route('/')
-	/* Get all tasks */
 	.get(getTasksAsync)
-	.post(function (req, res) {
-		"use strict";
-		var task = req.body;
-		taskService.Insert(task, res);
-	});
+	.post(postTaskAsync);
 
 router.route('/:id')
 	/* Get Task by id */

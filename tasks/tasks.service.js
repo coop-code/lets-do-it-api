@@ -1,17 +1,5 @@
 var taskConnection = require("./tasks.repository.js");
 
-function Task(title, description, comments, deadline, priority) {
-	"use strict";
-	this.id = 0,
-		this.title = title;
-	this.description = description || "";
-	this.registrationDate = new Date(Date.now());
-	this.done = false;
-	this.comments = comments || "";
-	this.deadline = deadline || undefined
-	this.priority = priority || false;
-}
-
 /* Get tasks with filters */
 async function GetByFilter(finished) {
 	let tasks = [];
@@ -23,34 +11,14 @@ async function GetByFilter(finished) {
 async function GetById(id) {
 	return await taskConnection.GetById(id);
 }
-
-/* Validate the task and add default informations before submit to insert */
-function Insert(taskPost, response) {
-	"use strict";
-	if (Validate(taskPost, response)) {
-		var task = new Task(taskPost.title, taskPost.description, taskPost.comments, taskPost.deadline, taskPost.priority);
-		taskConnection.Insert(task, response);
-	}
+async function Post(task) {
+	return await taskConnection.Post(task);
 }
 
 /*Delete a task by id */
 function Delete(id, response) {
 	"use strict";
 	taskConnection.Delete(id, response);
-}
-
-function Validate(taskPost, response) {
-	"use strict";
-	if (taskPost) {
-		if (!taskPost.title) {
-			response.status(400).send("Please enter the title of the task.");
-			return false;
-		}
-		return true;
-	} else {
-		response.status(400).send("Invalid Object");
-		return false;
-	}
 }
 
 /*Delete a task by id */
@@ -77,7 +45,6 @@ exports.DeleteAll = DeleteAll;
 /*===========================================================*/
 exports.GetByFilter = GetByFilter;
 exports.GetById = GetById;
-exports.Insert = Insert;
+exports.Post = Post;
 exports.Delete = Delete;
 exports.Update = Update;
-exports.Task = Task;
