@@ -3,10 +3,13 @@ let {
 	PutTaskDto
 } = require('./models/task.dto');
 
+
 var express = require('express');
 var router = express.Router();
 var bodyParser = require('body-parser');
 var taskService = require('./tasks.service.js');
+const Joi = require('joi');
+let postTaskSchema = require('./validators/post-task.schema');
 
 var app = express();
 app.use(bodyParser.json());
@@ -48,14 +51,19 @@ const getTaskAsync = async function getTask(req, res) {
 const postTaskAsync = async function postTaskAsync(req, res) {
 	let task = {};
 	let createTaskDto = new CreateTaskDto(req.body);
-	try {
-		task = await taskService.Post(createTaskDto);
-		res.status(201).send(task);
-	} catch (error) {
-		res.status(500).send({
-			"status": 500,
-			"error": error.message
-		});
+	const result = Joi.validate(createTaskDto, postTaskSchema);
+	if (result.error) {
+		res.status(422).send(result.error.details);
+	} else {
+		try {
+			task = await taskService.Post(createTaskDto);
+			res.status(201).send(task);
+		} catch (error) {
+			res.status(500).send({
+				"status": 500,
+				"error": error.message
+			});
+		}
 	}
 }
 
@@ -117,6 +125,6 @@ router.route('/')
 router.route('/:id')
 	.get(getTaskAsync)
 	.put(putTaskAsync)
-	.delete(deleteTaskAsync);	
+	.delete(deleteTaskAsync);
 
 module.exports = router;
