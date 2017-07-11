@@ -59,16 +59,6 @@ async function Delete(id) {
 	}
 
 }
-async function Put(id, task) {
-	await getConnection(connectionString);
-	try {
-		return await Task.findByIdAndUpdate(id, task).exec();
-	} catch (error) {
-		return {
-			"code": 404
-		};
-	}
-}
 
 /*================WARNING: REMOVE FROM PRODUCTION================*/
 /* Delete all tasks */

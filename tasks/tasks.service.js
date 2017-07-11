@@ -15,10 +15,6 @@ async function Delete(id) {
 	return await taskConnection.Delete(id);
 }
 
-async function Put(id, task) {
-	return await taskConnection.Put(id, task);
-}
-
 /*================WARNING: REMOVE FROM PRODUCTION================*/
 /* Delete all tasks */
 async function DeleteAll() {

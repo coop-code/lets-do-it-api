@@ -67,24 +67,6 @@ const postTaskAsync = async function postTaskAsync(req, res) {
 	}
 }
 
-const putTaskAsync = async function putTaskAsync(req, res) {
-	try {
-		let status = {};
-		let putTaskDto = new PutTaskDto(req.body);
-		status = await taskService.Put(req.params.id, putTaskDto);
-		if (status.code == 404) {
-			res.status(404).send();
-		} else {
-			res.status(204).send();
-		}
-	} catch (error) {
-		res.status(500).send({
-			"status": 500,
-			"error": error.message
-		});
-	}
-}
-
 const deleteTaskAsync = async function deleteTaskAsync(req, res) {
 	try {
 		let status = {};
@@ -124,7 +106,6 @@ router.route('/')
 
 router.route('/:id')
 	.get(getTaskAsync)
-	.put(putTaskAsync)
 	.delete(deleteTaskAsync);
 
 module.exports = router;
