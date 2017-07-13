@@ -46,6 +46,20 @@ async function Post(task) {
 	return await newTask.save();
 }
 
+async function Update(id, task) {
+	await getConnection(connectionString);
+	console.log(task);
+	return await Task.findByIdAndUpdate(id, {
+		$set: {
+			title: task.title,
+			description: task.description,
+			comments: task.comments,
+			priority: task.priority,
+			done: task.done
+		}
+	}).exec();
+}
+
 /*Delete a task by id */
 async function Delete(id) {
 	await getConnection(connectionString);
@@ -57,7 +71,6 @@ async function Delete(id) {
 			"code": 404
 		};
 	}
-
 }
 
 /*================WARNING: REMOVE FROM PRODUCTION================*/
@@ -106,5 +119,5 @@ exports.DeleteAll = DeleteAll;
 exports.GetByFilter = GetByFilter;
 exports.GetById = GetById;
 exports.Post = Post;
+exports.Update = Update;
 exports.Delete = Delete;
-exports.Put = Put;

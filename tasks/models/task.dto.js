@@ -7,7 +7,7 @@ exports.CreateTaskDto = class CreateTaskDto {
     }
 }
 
-exports.PutTaskDto = class PutTaskDto {
+exports.PatchTaskDto = class PatchTaskDto {
     constructor({title, description, comments, priority, done}) {
         this.title = title;
         this.description = description;

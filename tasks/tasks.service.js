@@ -11,9 +11,14 @@ async function Post(task) {
 	return await taskConnection.Post(task);
 }
 
+async function Update(id, task) {
+ 	return await taskConnection.Update(id, task);
+ }
+
 async function Delete(id) {
 	return await taskConnection.Delete(id);
 }
+
 
 /*================WARNING: REMOVE FROM PRODUCTION================*/
 /* Delete all tasks */
@@ -26,5 +31,5 @@ exports.DeleteAll = DeleteAll;
 exports.GetByFilter = GetByFilter;
 exports.GetById = GetById;
 exports.Post = Post;
+exports.Update = Update;
 exports.Delete = Delete;
-exports.Put = Put;

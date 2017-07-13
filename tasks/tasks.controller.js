@@ -1,6 +1,6 @@
 let {
 	CreateTaskDto,
-	PutTaskDto
+	PatchTaskDto
 } = require('./models/task.dto');
 
 
@@ -9,6 +9,7 @@ var router = express.Router();
 var bodyParser = require('body-parser');
 var taskService = require('./tasks.service.js');
 const Joi = require('joi');
+const jsonPatch = require('fast-json-patch');
 let postTaskSchema = require('./validators/post-task.schema');
 
 var app = express();
@@ -67,6 +68,28 @@ const postTaskAsync = async function postTaskAsync(req, res) {
 	}
 }
 
+const patchTaskAsync = async function patchTaskAsync(req, res) {
+	try {
+		let task = await taskService.GetById(req.params.id);
+		if (task) {
+			let taskToUpdate = new PatchTaskDto(task);
+			console.log(taskToUpdate);
+			taskToUpdate = jsonPatch.applyPatch(taskToUpdate, req.body).newDocument;
+			console.log(taskToUpdate);
+			await taskService.Update(req.params.id, taskToUpdate);
+			res.status(204).send();
+		} else {
+			res.status(404).send();
+		}
+	} catch (error) {
+		res.status(500).send({
+			"status": 500,
+			"error": error.message
+		});
+	}
+
+}
+
 const deleteTaskAsync = async function deleteTaskAsync(req, res) {
 	try {
 		let status = {};
@@ -106,6 +129,7 @@ router.route('/')
 
 router.route('/:id')
 	.get(getTaskAsync)
-	.delete(deleteTaskAsync);
+	.delete(deleteTaskAsync)
+	.patch(patchTaskAsync);
 
 module.exports = router;
