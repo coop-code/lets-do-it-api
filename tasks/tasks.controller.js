@@ -11,6 +11,7 @@ var taskService = require('./tasks.service.js');
 const Joi = require('joi');
 const jsonPatch = require('fast-json-patch');
 let postTaskSchema = require('./validators/post-task.schema');
+let patchTaskSchema = require('./validators/patch-task.schema');
 
 var app = express();
 app.use(bodyParser.json());
@@ -52,9 +53,9 @@ const getTaskAsync = async function getTask(req, res) {
 const postTaskAsync = async function postTaskAsync(req, res) {
 	let task = {};
 	let createTaskDto = new CreateTaskDto(req.body);
-	const result = Joi.validate(createTaskDto, postTaskSchema);
-	if (result.error) {
-		res.status(422).send(result.error.details);
+	const validationResult = Joi.validate(createTaskDto, postTaskSchema);
+	if (validationResult.error) {
+		res.status(422).send(validationResult.error.details);
 	} else {
 		try {
 			task = await taskService.Post(createTaskDto);
@@ -70,15 +71,23 @@ const postTaskAsync = async function postTaskAsync(req, res) {
 
 const patchTaskAsync = async function patchTaskAsync(req, res) {
 	try {
+		//check if the task exists
 		let task = await taskService.GetById(req.params.id);
 		if (task) {
 			let taskToUpdate = new PatchTaskDto(task);
-			console.log(taskToUpdate);
 			taskToUpdate = jsonPatch.applyPatch(taskToUpdate, req.body).newDocument;
-			console.log(taskToUpdate);
-			await taskService.Update(req.params.id, taskToUpdate);
-			res.status(204).send();
+			//check if the updated task is valid according to update rules
+			const validationResult = Joi.validate(taskToUpdate, patchTaskSchema);
+			if (validationResult.error) {
+				//task is not valid
+				res.status(422).send(validationResult.error.details);
+			} else {
+				//Task exists and is valid, proceed with the update...
+				await taskService.Update(req.params.id, taskToUpdate);
+				res.status(204).send();
+			}
 		} else {
+			//task does not exists
 			res.status(404).send();
 		}
 	} catch (error) {

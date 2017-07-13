@@ -48,7 +48,6 @@ async function Post(task) {
 
 async function Update(id, task) {
 	await getConnection(connectionString);
-	console.log(task);
 	return await Task.findByIdAndUpdate(id, {
 		$set: {
 			title: task.title,
