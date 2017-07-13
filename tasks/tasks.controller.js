@@ -10,6 +10,7 @@ var bodyParser = require('body-parser');
 var taskService = require('./tasks.service.js');
 const Joi = require('joi');
 const jsonPatch = require('fast-json-patch');
+const moment = require('moment');
 let postTaskSchema = require('./validators/post-task.schema');
 let patchTaskSchema = require('./validators/patch-task.schema');
 
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({
 /* Functions associated to routes */
 const getTasksAsync = async function getTasksAsync(req, res) {
 	let tasks = [];
+	console.log()
 	try {
 		tasks = await taskService.GetByFilter(req.query.finished);
 		res.status(200).send(tasks);
