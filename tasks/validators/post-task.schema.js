@@ -6,6 +6,7 @@ const postTaskSchema = Joi.object().keys({
     title: Joi.string().required(),
     description: Joi.string(),
     comments: Joi.string(),
+    deadlineDate: Joi.date().iso(),
     priority: Joi.boolean().required()
 });
 

@@ -1,15 +1,13 @@
 var taskConnection = require("./tasks.repository.js");
-let moment = require('moment');
 
 async function GetByFilter(finished) {
-	let tasks = JSON.parse(JSON.stringify(await taskConnection.GetByFilter(finished)));
-	return customizeFieldsOfArray(tasks);
+	return await taskConnection.GetByFilter(finished);
 }
 
 async function GetById(id) {
-	let task = JSON.parse(JSON.stringify(await taskConnection.GetById(id)));
-	return customizeFieldsOfElement(task);
+	return await taskConnection.GetById(id);
 }
+
 async function Post(task) {
 	return await taskConnection.Post(task);
 }
@@ -29,6 +27,7 @@ async function DeleteAll() {
 	return await taskConnection.DeleteAll();
 }
 
+/* Removed date parse for now (date is now using ISO format)
 function customizeFieldsOfArray(tasks) {
 	tasks.forEach(function (task) {
 		task.registrationDate = ParseDate(task.registrationDate);
@@ -50,6 +49,7 @@ function ParseDate(timestamp) {
 		return undefined;
 	}
 }
+*/
 
 exports.DeleteAll = DeleteAll;
 /*===========================================================*/

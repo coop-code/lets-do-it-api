@@ -41,7 +41,8 @@ async function Post(task) {
 		title: task.title,
 		description: task.description,
 		comments: task.comments,
-		priority: task.priority
+		priority: task.priority,
+		deadlineDate: task.deadlineDate
 	});
 	return await newTask.save();
 }
