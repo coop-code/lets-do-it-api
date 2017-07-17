@@ -9,7 +9,7 @@ let taskSchema = new Schema({
   priority: {type: Boolean, required: true, default: false},
   registrationDate: { type: Date, required:true, default: Date.now },
   deadlineDate: {type: Date, get: returnEmptyStringWhenNull, default: ""}
-}, {collection: 'tasks-test'});
+}, {collection: 'tasks'});
 
 taskSchema.set('toObject', { getters: true });
 taskSchema.set('toJSON', { getters: true });
