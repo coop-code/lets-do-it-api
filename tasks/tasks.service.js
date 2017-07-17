@@ -5,7 +5,8 @@ async function GetByFilter(finished) {
 }
 
 async function GetById(id) {
-	return await taskConnection.GetById(id);
+	let task = await taskConnection.GetById(id);
+	return JSON.parse(JSON.stringify(task));
 }
 
 async function Post(task) {

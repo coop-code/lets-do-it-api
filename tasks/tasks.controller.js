@@ -76,8 +76,10 @@ const patchTaskAsync = async function patchTaskAsync(req, res) {
 		//check if the task exists
 		let task = await taskService.GetById(req.params.id);
 		if (task) {
-			let taskToUpdate = new PatchTaskDto(task);
-			taskToUpdate = jsonPatch.applyPatch(taskToUpdate, req.body).newDocument;
+			let	taskToUpdate = jsonPatch.applyPatch(task, req.body).newDocument;
+			console.log(taskToUpdate);
+			taskToUpdate = new PatchTaskDto(taskToUpdate);
+			console.log(taskToUpdate);
 			//check if the updated task is valid according to update rules
 			const validationResult = Joi.validate(taskToUpdate, patchTaskSchema);
 			if (validationResult.error) {

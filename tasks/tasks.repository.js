@@ -20,6 +20,7 @@ async function GetByFilter(finished = 'false') {
 	const tasks = await Task.find({
 		done: isFinished
 	});
+	console.log(tasks);
 	return tasks;
 }
 
@@ -28,7 +29,7 @@ async function GetById(id) {
 	await getConnection(connectionString);
 	try {
 		const task = await Task.findById(id).exec();
-		return task
+		return task;
 	} catch (err) {
 		return null;
 	}
@@ -55,6 +56,7 @@ async function Update(id, task) {
 			description: task.description,
 			comments: task.comments,
 			priority: task.priority,
+			deadlineDate : task.deadlineDate,
 			done: task.done
 		}
 	}).exec();
