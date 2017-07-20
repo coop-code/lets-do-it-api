@@ -10,7 +10,6 @@ var bodyParser = require('body-parser');
 var taskService = require('./tasks.service.js');
 const Joi = require('joi');
 const jsonPatch = require('fast-json-patch');
-const moment = require('moment');
 let postTaskSchema = require('./validators/post-task.schema');
 let patchTaskSchema = require('./validators/patch-task.schema');
 
