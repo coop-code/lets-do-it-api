@@ -14,8 +14,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(express.static(path.join(__dirname, 'public')));
-
+app.use('/docs', express.static(path.join(__dirname, '/docs')))
 
 //Routes and Controllers configurations
 app.use('/tasks', tasksController);

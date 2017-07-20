@@ -1,0 +1,73 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Let's Do It is a task management project (a to-do list) implemented for studying purposes. This API provides all operations regarding tasks. For more information, please check its [github repository](https://github.com/coop-code/lets-do-it-api)",
+    "version": "0.2.0",
+    "title": "Lets Do It API",
+    "contact": {
+      "name": "API Support",
+      "url": "https://github.com/coop-code/lets-do-it/issues",
+      "email": "brenowschneider@gmail.com"
+    }
+  },
+  "host": "http://localhost:4001",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/tasks": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Add a new task",
+        "description": "",
+        "operationId": "addTask",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "description": "Task object that needs to be added to tasks list",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/PostTaskDto"
+          }
+        }],
+        "responses": {
+          "201": {
+            "description": "Task succesfully created"
+          },
+          "422": {
+            "description": "Invalid task object"
+          },
+          "500": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "PostTaskDto": {
+      "type": "object",
+      "required" : ["title"],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "description" : "Detailed description of the task"
+        }
+      }
+     
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}
