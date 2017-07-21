@@ -23,9 +23,9 @@
         "summary": "Add a new task",
         "operationId": "addTask",
         "consumes": [
-          "application/json"
+          "application/JSON"
         ],
-        "produces": ["application/json"],
+        "produces": ["application/JSON"],
         "parameters": [{
           "in": "body",
           "name": "body",
@@ -87,7 +87,7 @@
         "description": "Returns a single tasks",
         "operationId": "getTaskById",
         "produces": [
-          "application/json"
+          "application/JSON"
         ],
         "parameters": [{
           "name": "id",
@@ -111,6 +111,32 @@
             "description": "Unexpected error"
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Updates a task",
+        "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "ID of the task",
+            "required": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          {
+            "name": "JSONPatchRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items" : {
+                "$ref": "#/definitions/JSONPatchDocument"
+              }
+            }
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -203,6 +229,30 @@
           "type": "string",
           "format": "date-time",
           "description": "Task registration time"
+        }
+      }
+    },
+    "JSONPatchDocument": {
+      "type": "object",
+      "description": "A JSONPatch document as defined by RFC 6902",
+      "required": ["op", "path"],
+      "properties": {
+        "op": {
+          "required": true,
+          "description": "Operation to be performed",
+          "enum": ["add", "remove", "replace", "move", "copy", "test"]
+        },
+        "path": {
+          "required": true,
+          "description": "A JSON pointer"
+        },
+        "value": {
+          "required": true,
+          "description": "The value to be used in the operation"
+        },
+        "from": {
+          "required": true,
+          "description": "String containing a JSON pointer value"
         }
       }
     }
