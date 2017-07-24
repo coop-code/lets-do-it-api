@@ -1,15 +1,13 @@
-let {
-	CreateTaskDto,
-	PatchTaskDto
-} = require('./models/task.dto');
+//External requires
+let express = require('express');
+let router = express.Router();
+let bodyParser = require('body-parser');
+let Joi = require('joi');
+let jsonPatch = require('fast-json-patch');
 
-
-var express = require('express');
-var router = express.Router();
-var bodyParser = require('body-parser');
+//Internal requires
+let {CreateTaskDto, PatchTaskDto} = require('./models/task.dto');
 var taskService = require('./tasks.service.js');
-const Joi = require('joi');
-const jsonPatch = require('fast-json-patch');
 let postTaskSchema = require('./validators/post-task.schema');
 let patchTaskSchema = require('./validators/patch-task.schema');
 
@@ -19,10 +17,12 @@ app.use(bodyParser.urlencoded({
 	extended: false
 }));
 
+//----------------------------------------//
+
 /* Functions associated to routes */
+//Get list of tasks
 const getTasksAsync = async function getTasksAsync(req, res) {
 	let tasks = [];
-	console.log()
 	try {
 		tasks = await taskService.GetByFilter(req.query.finished);
 		res.status(200).send(tasks);
@@ -34,6 +34,7 @@ const getTasksAsync = async function getTasksAsync(req, res) {
 	}
 }
 
+//Get task by ID
 const getTaskAsync = async function getTask(req, res) {
 	let task = {};
 	try {
@@ -51,9 +52,12 @@ const getTaskAsync = async function getTask(req, res) {
 	}
 }
 
+//POST task (Insert new task)
 const postTaskAsync = async function postTaskAsync(req, res) {
 	let task = {};
 	let createTaskDto = new CreateTaskDto(req.body);
+	
+	//Task fields validation
 	const validationResult = Joi.validate(createTaskDto, postTaskSchema);
 	if (validationResult.error) {
 		res.status(422).send(validationResult.error.details);
@@ -70,19 +74,19 @@ const postTaskAsync = async function postTaskAsync(req, res) {
 	}
 }
 
+//PATCH task (Update a task)
 const patchTaskAsync = async function patchTaskAsync(req, res) {
 	try {
-		//check if the task exists
+		//Check if the task exists
 		let task = await taskService.GetById(req.params.id);
 		if (task) {
 			let	taskToUpdate = jsonPatch.applyPatch(task, req.body).newDocument;
-			console.log(taskToUpdate);
 			taskToUpdate = new PatchTaskDto(taskToUpdate);
-			console.log(taskToUpdate);
-			//check if the updated task is valid according to update rules
+			
+			//Task fields validation (after the update)
 			const validationResult = Joi.validate(taskToUpdate, patchTaskSchema);
 			if (validationResult.error) {
-				//task is not valid
+				//Task is not valid
 				res.status(422).send(validationResult.error.details);
 			} else {
 				//Task exists and is valid, proceed with the update...
@@ -90,7 +94,7 @@ const patchTaskAsync = async function patchTaskAsync(req, res) {
 				res.status(204).send();
 			}
 		} else {
-			//task does not exists
+			//Task does not exists
 			res.status(404).send();
 		}
 	} catch (error) {
@@ -102,13 +106,17 @@ const patchTaskAsync = async function patchTaskAsync(req, res) {
 
 }
 
+//Delete a task
 const deleteTaskAsync = async function deleteTaskAsync(req, res) {
 	try {
 		let status = {};
 		status = await taskService.Delete(req.params.id);
+				
 		if (status.code == 404) {
+			//Task not found
 			res.status(404).send();
 		} else {
+			//Task deleted successfully
 			res.status(204).send();
 		}
 	} catch (error) {
@@ -119,7 +127,8 @@ const deleteTaskAsync = async function deleteTaskAsync(req, res) {
 	}
 }
 
-//Function that removes all tasks (NOT ADVISED on production environments)
+//Delete all tasks
+//******* Warning : this function is NOT ADVISED on production environments **********
 const deleteAllTasksAsync = async function deleteAllTasksAsync(req, res) {
 	try {
 		await taskService.DeleteAll();
@@ -132,8 +141,9 @@ const deleteAllTasksAsync = async function deleteAllTasksAsync(req, res) {
 	}
 }
 
-/* Routes definitions */
+//----------------------------------------//
 
+/* Routes definitions */
 router.route('/')
 	.get(getTasksAsync)
 	.post(postTaskAsync)
