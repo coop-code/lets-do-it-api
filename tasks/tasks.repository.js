@@ -1,11 +1,10 @@
-var assert = require('assert');
-const mongoose = require('mongoose');
-const Task = require('./models/task.schema');
+let mongoose = require('mongoose');
+let Task = require('./models/task.schema');
 mongoose.Promise = Promise;
 
 /*****************
 Connection URL is composed by user, password and host
-Right now, the database is hosted in mongodb atlas. Feel free to change if you already have a database.
+Right now, the database is hosted in mongodb atlas. Feel free to change if you already have a mongo database.
 The current environment is just for studying purposes, so there's no need provide any additional security yet.
 *****************/
 const dbUser = 'lets-do-it-api';
@@ -13,6 +12,7 @@ const dbPassword = 'lets-do-it-password';
 const dbHost = 'clustermongodb-shard-00-00-fpkbe.mongodb.net:27017,clustermongodb-shard-00-01-fpkbe.mongodb.net:27017,clustermongodb-shard-00-02-fpkbe.mongodb.net:27017/letsdoit?ssl=true&replicaSet=ClusterMongoDB-shard-0&authSource=admin'
 const connectionString = 'mongodb://' + dbUser + ':' + dbPassword + '@' + dbHost;
 
+//Get List of tasks (finished or done parameter is false by default)
 async function GetByFilter(finished = 'false') {
 
 	await getConnection(connectionString);
@@ -20,7 +20,6 @@ async function GetByFilter(finished = 'false') {
 	const tasks = await Task.find({
 		done: isFinished
 	});
-	console.log(tasks);
 	return tasks;
 }
 
@@ -31,11 +30,12 @@ async function GetById(id) {
 		const task = await Task.findById(id).exec();
 		return task;
 	} catch (err) {
+		//Task not found
 		return null;
 	}
 }
 
-/* Insert a task and return status 201 (created) on success */
+/* Insert a new task */
 async function Insert(task) {
 	await getConnection(connectionString);
 	let newTask = Task({
@@ -83,7 +83,6 @@ async function DeleteAll(response) {
 }
 
 /* Private Functions */
-
 function handleConnectionError() {
 	throw new Error("Connection Problem");
 }
@@ -101,6 +100,7 @@ async function getConnection(connectionString) {
 
 exports.DeleteAll = DeleteAll;
 /*===========================================================*/
+
 exports.GetByFilter = GetByFilter;
 exports.GetById = GetById;
 exports.Insert = Insert;

@@ -103,7 +103,6 @@ const patchTaskAsync = async function patchTaskAsync(req, res) {
 			"error": error.message
 		});
 	}
-
 }
 
 //Delete a task
