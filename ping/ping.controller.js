@@ -1,8 +1,7 @@
-var router = require('express').Router();
+let router = require('express').Router();
 
-/* Ping */
+/* API Health Check */
 router.get('/', function(req, res) {
-	"use strict";
 	res.status(200).send("pong!");
 });
 
