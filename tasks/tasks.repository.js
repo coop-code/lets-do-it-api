@@ -36,7 +36,7 @@ async function GetById(id) {
 }
 
 /* Insert a task and return status 201 (created) on success */
-async function Post(task) {
+async function Insert(task) {
 	await getConnection(connectionString);
 	let newTask = Task({
 		title: task.title,
@@ -103,6 +103,6 @@ exports.DeleteAll = DeleteAll;
 /*===========================================================*/
 exports.GetByFilter = GetByFilter;
 exports.GetById = GetById;
-exports.Post = Post;
+exports.Insert = Insert;
 exports.Update = Update;
 exports.Delete = Delete;

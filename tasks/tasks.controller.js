@@ -7,7 +7,7 @@ let jsonPatch = require('fast-json-patch');
 
 //Internal requires
 let {CreateTaskDto, PatchTaskDto} = require('./models/task.dto');
-var taskService = require('./tasks.service.js');
+var tasksRepository = require('./tasks.repository.js');
 let postTaskSchema = require('./validators/post-task.schema');
 let patchTaskSchema = require('./validators/patch-task.schema');
 
@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({
 const getTasksAsync = async function getTasksAsync(req, res) {
 	let tasks = [];
 	try {
-		tasks = await taskService.GetByFilter(req.query.finished);
+		tasks = await tasksRepository.GetByFilter(req.query.finished);
 		res.status(200).send(tasks);
 	} catch (error) {
 		res.status(500).send({
@@ -38,7 +38,7 @@ const getTasksAsync = async function getTasksAsync(req, res) {
 const getTaskAsync = async function getTask(req, res) {
 	let task = {};
 	try {
-		task = await taskService.GetById(req.params.id);
+		task = await tasksRepository.GetById(req.params.id);
 		if (task) {
 			res.status(200).send(task);
 		} else {
@@ -63,7 +63,7 @@ const postTaskAsync = async function postTaskAsync(req, res) {
 		res.status(422).send(validationResult.error.details);
 	} else {
 		try {
-			task = await taskService.Post(createTaskDto);
+			task = await tasksRepository.Insert(createTaskDto);
 			res.status(201).send(task);
 		} catch (error) {
 			res.status(500).send({
@@ -78,7 +78,7 @@ const postTaskAsync = async function postTaskAsync(req, res) {
 const patchTaskAsync = async function patchTaskAsync(req, res) {
 	try {
 		//Check if the task exists
-		let task = await taskService.GetById(req.params.id);
+		let task = await tasksRepository.GetById(req.params.id);
 		if (task) {
 			let	taskToUpdate = jsonPatch.applyPatch(task, req.body).newDocument;
 			taskToUpdate = new PatchTaskDto(taskToUpdate);
@@ -90,7 +90,7 @@ const patchTaskAsync = async function patchTaskAsync(req, res) {
 				res.status(422).send(validationResult.error.details);
 			} else {
 				//Task exists and is valid, proceed with the update...
-				await taskService.Update(req.params.id, taskToUpdate);
+				await tasksRepository.Update(req.params.id, taskToUpdate);
 				res.status(204).send();
 			}
 		} else {
@@ -110,7 +110,7 @@ const patchTaskAsync = async function patchTaskAsync(req, res) {
 const deleteTaskAsync = async function deleteTaskAsync(req, res) {
 	try {
 		let status = {};
-		status = await taskService.Delete(req.params.id);
+		status = await tasksRepository.Delete(req.params.id);
 				
 		if (status.code == 404) {
 			//Task not found
@@ -131,7 +131,7 @@ const deleteTaskAsync = async function deleteTaskAsync(req, res) {
 //******* Warning : this function is NOT ADVISED on production environments **********
 const deleteAllTasksAsync = async function deleteAllTasksAsync(req, res) {
 	try {
-		await taskService.DeleteAll();
+		await tasksRepository.DeleteAll();
 		res.status(204).send();
 	} catch (error) {
 		res.status(500).send({
