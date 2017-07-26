@@ -1,21 +1,15 @@
-let mongoose = require('mongoose');
-let Task = require('./models/task.schema');
-mongoose.Promise = Promise;
+//External requires
+const mongoose = require('mongoose');
 
-/*****************
-Connection URL is composed by user, password and host
-Right now, the database is hosted in mongodb atlas. Feel free to change if you already have a mongo database.
-The current environment is just for studying purposes, so there's no need provide any additional security yet.
-*****************/
-const dbUser = 'lets-do-it-api';
-const dbPassword = 'lets-do-it-password';
-const dbHost = 'clustermongodb-shard-00-00-fpkbe.mongodb.net:27017,clustermongodb-shard-00-01-fpkbe.mongodb.net:27017,clustermongodb-shard-00-02-fpkbe.mongodb.net:27017/letsdoit?ssl=true&replicaSet=ClusterMongoDB-shard-0&authSource=admin'
-const connectionString = 'mongodb://' + dbUser + ':' + dbPassword + '@' + dbHost;
+//Internal requires
+const Task = require('./models/task.schema');
+const config = require('../config/database');
+mongoose.Promise = Promise;
 
 //Get List of tasks (finished or done parameter is false by default)
 async function GetByFilter(finished = 'false') {
 
-	await getConnection(connectionString);
+	await getConnection(config.connectionString);
 	let isFinished = finished.toLowerCase() === 'true';
 	const tasks = await Task.find({
 		done: isFinished
@@ -25,7 +19,7 @@ async function GetByFilter(finished = 'false') {
 
 /* Get a task by Id */
 async function GetById(id) {
-	await getConnection(connectionString);
+	await getConnection(config.connectionString);
 	try {
 		const task = await Task.findById(id).exec();
 		return task;
@@ -37,7 +31,7 @@ async function GetById(id) {
 
 /* Insert a new task */
 async function Insert(task) {
-	await getConnection(connectionString);
+	await getConnection(config.connectionString);
 	let newTask = Task({
 		title: task.title,
 		description: task.description,
@@ -49,7 +43,7 @@ async function Insert(task) {
 }
 
 async function Update(id, task) {
-	await getConnection(connectionString);
+	await getConnection(config.connectionString);
 	return await Task.findByIdAndUpdate(id, {
 		$set: {
 			title: task.title,
@@ -64,7 +58,7 @@ async function Update(id, task) {
 
 /*Delete a task by id */
 async function Delete(id) {
-	await getConnection(connectionString);
+	await getConnection(config.connectionString);
 	try {
 		let task = await Task.findById(id).exec();
 		return await task.remove();
@@ -78,7 +72,7 @@ async function Delete(id) {
 /*================WARNING: REMOVE FROM PRODUCTION================*/
 /* Delete all tasks */
 async function DeleteAll(response) {
-	await getConnection(connectionString);
+	await getConnection(config.connectionString);
 	return await Task.remove({}).exec();
 }
 
