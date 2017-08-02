@@ -25,10 +25,15 @@ Validate username and password.
 Encrypt password (if is not already encrypted) before comparison.
 Returns a token.
 
-### For information, protected means that a route requires an access token on the request header.
+#### For information, protected means that a route requires an access token on the request header.
 
 - `PATCH /user` : Partially update user information (**Protected**)
 - `PATCH /user/password` : Update user password (**Protected**)
+
+
+### Refactoring and improvements
+
+- Error handling middleware
 
 ### Changes
 
