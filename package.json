@@ -4,7 +4,8 @@
   "description": "Web API (backend part) of the to-do list manager 'Lets Do It!'",
   "main": "server.js",
   "scripts": {
-    "start": "node ./index.js"
+    "start": "node ./index.js",
+    "dev": "nodemon ./index.js"
   },
   "dependencies": {
     "body-parser": "1.15.1",
@@ -35,6 +36,7 @@
   },
   "homepage": "https://github.com/coop-code/lets-do-it-api#readme",
   "devDependencies": {
+    "nodemon": "^1.11.0",
     "standard": "10.0.2"
   }
 }

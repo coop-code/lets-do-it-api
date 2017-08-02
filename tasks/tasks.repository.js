@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 //Internal requires
 const Task = require('./models/task.schema');
-const config = require('../config/database');
+const config = require('../config/main');
 mongoose.Promise = Promise;
 
 //Get List of tasks (finished or done parameter is false by default)
