@@ -7,6 +7,8 @@ let cors = require('cors');
 //Internal require
 let tasksController = require('./tasks/tasks.controller');
 let pingController = require('./ping/ping.controller');
+const errorHandlingMiddleware = require('./middlewares/error-handling');
+const config = require('./config/main');
 
 let app = express();
 
@@ -24,15 +26,11 @@ app.use('/docs', express.static(path.join(__dirname, '/docs')))
 app.use('/tasks', tasksController);
 app.use('/ping', pingController);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-	let err = new Error('Not Found');
-	err.status = 404;
-	res.status(404).send(err.message);
-});
+//Error Handling Middleware
+app.use(errorHandlingMiddleware); 
 
 //Default port is 4001 if not set by environment variable
-app.set('port', process.env.PORT || '4001');
+app.set('port', config.port);
 
 //Start the server
 var server = app.listen(app.get('port'), function () {

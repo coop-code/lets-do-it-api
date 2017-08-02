@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 //Internal requires
 const Task = require('./models/task.schema');
 const config = require('../config/main');
+const errorNames = require('../config/error-names');
 mongoose.Promise = Promise;
 
 //Get List of tasks (finished or done parameter is false by default)
@@ -24,8 +25,9 @@ async function GetById(id) {
 		const task = await Task.findById(id).exec();
 		return task;
 	} catch (err) {
-		//Task not found
-		return null;
+		const error = new Error();
+		error.name = errorNames.NotFoundError;
+		throw error;
 	}
 }
 
@@ -60,12 +62,11 @@ async function Update(id, task) {
 async function Delete(id) {
 	await getConnection(config.connectionString);
 	try {
-		let task = await Task.findById(id).exec();
-		return await task.remove();
-	} catch (error) {
-		return {
-			"code": 404
-		};
+		return await Task.findByIdAndRemove(id).exec();
+	} catch (err) {
+		const error = new Error();
+		error.name = errorNames.NotFoundError;
+		throw error;
 	}
 }
 
