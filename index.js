@@ -6,6 +6,7 @@ let cors = require('cors');
 
 //Internal require
 let tasksController = require('./tasks/tasks.controller');
+let usersController = require('./users/users.controller');
 let pingController = require('./ping/ping.controller');
 const errorHandlingMiddleware = require('./middlewares/error-handling');
 const config = require('./config/main');
@@ -24,6 +25,7 @@ app.use('/docs', express.static(path.join(__dirname, '/docs')))
 //Routes and Controllers configurations
 //Further routes starting from the routes below are defined in each controller.
 app.use('/tasks', tasksController);
+app.use('/users', usersController);
 app.use('/ping', pingController);
 
 //Error Handling Middleware
