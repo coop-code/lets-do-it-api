@@ -3,12 +3,18 @@ let express = require('express');
 let router = express.Router();
 let bodyParser = require('body-parser');
 let Joi = require('joi');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 //Internal requires
-let {CreateUserDto} = require('./models/user.dto');
+let {
+    CreateUserDto,
+    GetUserDto
+} = require('./models/user.dto');
 var usersRepository = require('./users.repository.js');
 let createUserSchema = require('./validations/create-user.schema');
 const errorNames = require('../config/error-names');
+const config = require('../config/main');
 
 var app = express();
 app.use(bodyParser.json());
@@ -32,6 +38,12 @@ const checkUsernameDuplicity = async(user) => {
     return await usersRepository.GetByUsername(user);
 }
 
+const generateToken = (user) => {
+    return jwt.sign(user, config.secret, {
+        expiresIn: 10080 // in seconds
+    });
+}
+
 const postUserAsync = async(req, res, next) => {
 
     const createUserDto = new CreateUserDto(req.body);
@@ -48,7 +60,11 @@ const postUserAsync = async(req, res, next) => {
                 next(error);
             } else {
                 const user = await usersRepository.Insert(createUserDto);
-                res.status(201).send(user);
+                const getUser = new GetUserDto(user);
+                res.status(201).send({
+                    token: `JWT ${generateToken(getUser)}`,
+                    user: getUser
+                });
             }
         } catch (error) {
             next(error);
@@ -56,7 +72,17 @@ const postUserAsync = async(req, res, next) => {
     }
 }
 
+const login = (req, res, next) => {
+
+    let userInfo = new GetUserDto(req);
+
+    res.status(200).json({
+        token: `JWT ${generateToken(userInfo)}`,
+        user: userInfo
+    });
+}
+
 router.route('/').post(postUserAsync);
+router.route('/login').post(login);
 
 module.exports = router;
-
