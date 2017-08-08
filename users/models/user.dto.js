@@ -14,5 +14,13 @@ exports.GetUserDto = class GetUserDto {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.token = "";
+    }
+}
+
+exports.LoginUserDto = class GetUserDto {
+    constructor({email, password}) {
+        this.email = email;
+        this.password = password;
     }
 }
