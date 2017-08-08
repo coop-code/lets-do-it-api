@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
+const passport = require('passport');
 
 //Internal requires
 let {
@@ -18,6 +19,8 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 
+const requireLogin = passport.authenticate('local', { session: false });
+
 const postUserAsync = async(req, res, next) => {
     const createUserDto = new CreateUserDto(req.body);
     const user = await usersService.Insert(createUserDto, next);
@@ -31,6 +34,6 @@ const loginUserAsync = async(req, res, next) => {
 }
 
 router.route('/').post(postUserAsync);
-router.route('/login').post(loginUserAsync);
+router.route('/login').post(requireLogin, loginUserAsync);
 
 module.exports = router;

@@ -15,6 +15,12 @@ const GetByUsername = async(user) => {
     }).exec();
 }
 
+const GetByEmail = async(user) => {
+    return await User.findOne({
+        username: user.email
+    }).exec();
+}
+
 const Insert = async(user) => {
     const newUser = new User({
         firstName: user.firstName,
@@ -29,3 +35,4 @@ const Insert = async(user) => {
 
 exports.Insert = Insert;
 exports.GetByUsername = GetByUsername;
+exports.GetByEmail = GetByEmail;

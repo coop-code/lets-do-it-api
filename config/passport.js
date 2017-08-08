@@ -11,7 +11,6 @@ const localOptions = {
 
 // Setting up local login strategy
 const localLogin = new LocalStrategy(localOptions, (email, password, done) => {
-    console.log('local login')
     User.findOne({
         email: email
     }, (err, user) => {
@@ -48,8 +47,6 @@ const jwtOptions = {
 
 // Setting up JWT login strategy
 const jwtLogin = new JwtStrategy(jwtOptions, (payload, done) => {
-    console.log('login...')
-    console.log(payload);
     User.findById(payload._id, (err, user) => {
         if (err) {
             return done(err, false);

@@ -20,7 +20,6 @@ const Insert = async(user, next) => {
     try {
         //Validate user information
         await userValidation.ValidateUser(user);
-
         const userFromRepo = await usersRepository.Insert(user);
 
         //Map the user from database model a DTO model and insert the user access token
@@ -33,14 +32,11 @@ const Insert = async(user, next) => {
     }
 }
 
-const Login = (loginUser, next) => {
-
+const Login = async (loginUser,req, res, next) => {
     const token = `JWT ${ generateToken(loginUser)}`;
     return {
         'token': token
     };
-
-
 }
 
 module.exports.Insert = Insert;
